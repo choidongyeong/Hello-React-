@@ -11,8 +11,9 @@ import './App.css';
 class App extends Component {
   constructor(props){
     super(props);
+    this.max_content_id = 3;
     this.state = {
-      mode:'read',
+      mode:'create',
       selected_content_id:2,
       Subject:{title:'WEB', sub:'World Wid Web!'},
       welcome:{title:'Wecome', desc:'Hello, React!!'},
@@ -24,10 +25,11 @@ class App extends Component {
     }
   }
   render() {
-    var _title, _desc =null;
+    var _title, _desc, _article =null;
     if(this.state.mode === 'welcome'){
       _title = this.state.welcome.title;
       _desc = this.state.welcome.desc;
+      _article = <ReadContent title={_title} desc={_desc}></ReadContent>
     } else if(this.state.mode === 'read'){
       var i = 0;
       while(i < this.state.contents.length){
@@ -39,6 +41,33 @@ class App extends Component {
         }
         i = i + 1;
       }
+      _article = <ReadContent title={_title} desc={_desc}></ReadContent>
+    } else if (this.state.mode ==='create') {
+      _article = <CreateContent onSubmit={function(_title, _desc){
+        // add content to this.state.contents
+
+        this.max_content_id = this.max_content_id+1;
+        
+        //Arr에 담아서 새로운 데이터를 생성해서 담는 방법
+        //var newContents = Array.from(this.state.contents);
+
+        //Object.assign({})에 담아서 새로운 데이터를 생성하는 방법
+        //var a = {name:동영}
+        //var b = Object.assign({b:1},a);
+
+        //push는 원본을 바꾸지만, concat은 원본을 바꾸지않는고 새로운 데이터를 추가한다.
+        // this.state.contents.push(
+        //   {id:this.max_content_id, title:_title, desc:_desc}
+        // );
+
+        var _contents = this.state.contents.concat(
+          {id:this.max_content_id, title:_title, desc:_desc}
+        );
+
+        this.setState({
+          contents:_contents
+        });
+      }.bind(this)}></CreateContent>
     }
     return (
       <div className="App">
@@ -64,7 +93,7 @@ class App extends Component {
               mode:_mode
             })
           }.bind(this)}></Control>
-          <ReadContent title={_title} desc={_desc}></ReadContent>
+          {_article}
       </div>
     );
     
